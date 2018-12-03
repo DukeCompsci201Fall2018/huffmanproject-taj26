@@ -37,7 +37,7 @@ public class HuffProcessor {
 	 * Determine the frequency of each of 257 values by reading the 8-bit character chunks
 	 * @param in the BitInputStream to be read
 	 */
-	public int[] readForCounts(BitInputStream in) {
+	private int[] readForCounts(BitInputStream in) {
 		int[] freq = new int[257];
 		for (int i = 0; i < freq.length; i ++) {
 			freq[i] = 0;
@@ -62,7 +62,7 @@ public class HuffProcessor {
 	 * Returns the root of the Huffman Trie/Tree
 	 * @param counts the frequency of each alpha character
 	 */
-	public HuffNode makeTreeFromCounts(int[] counts) {
+	private HuffNode makeTreeFromCounts(int[] counts) {
 		PriorityQueue<HuffNode> pq = new PriorityQueue<>();
 		
 		for (int k = 0; k < counts.length; k++) {
@@ -87,7 +87,7 @@ public class HuffProcessor {
 	 * @param path the String path so far to get to the root
 	 * @param encoder the key for setting paths and values
 	 */
-	public void codingHelper(HuffNode root, String path, String[] encoder) {
+	private void codingHelper(HuffNode root, String path, String[] encoder) {
 		//System.out.println("hi" + path);
 		if (root.myLeft == null && root.myRight == null) {
 			encoder[root.myValue] = path;
@@ -101,7 +101,7 @@ public class HuffProcessor {
 	 * Makes a String[] of encodings based on the HuffTree
 	 * @param the HuffNode root at the beginning of the encoding tree
 	 */
-	public String[] makeCodingsFromTree(HuffNode root) {
+	private String[] makeCodingsFromTree(HuffNode root) {
 		String[] encoder = new String[ALPH_SIZE + 1];
 		codingHelper(root, "", encoder);
 		return encoder;
@@ -112,7 +112,7 @@ public class HuffProcessor {
 	 * @param root the start of the tree to be written
 	 * @param out the BitOutputStream to which the HuffTree is written
 	 */
-	public void writeHeader(HuffNode root, BitOutputStream out) {
+	private void writeHeader(HuffNode root, BitOutputStream out) {
 		if (root.myLeft != null || root.myRight != null) {
 			out.writeBits(1, 0);
 			writeHeader(root.myLeft, out);
@@ -129,7 +129,7 @@ public class HuffProcessor {
 	 * @param in the BitInputStream of uncompressed data
 	 * @param out the BitOutputStream to compress data to
 	 */
-	public void writeCompressedBits(String[] codings, BitInputStream in, BitOutputStream out) {
+	private void writeCompressedBits(String[] codings, BitInputStream in, BitOutputStream out) {
 		in.reset();
 		String code;
 		while (true) {
@@ -200,7 +200,7 @@ public class HuffProcessor {
 	 * Reads a BitInputStream recursively and returns a Tree of HuffNodes that maps the key
 	 * @param in a bit stream of the file to be converted to a HuffTree
 	 */
-	public HuffNode readTreeHeader(BitInputStream in) {
+	private HuffNode readTreeHeader(BitInputStream in) {
 		int bit = in.readBits(1);
 		if (bit == -1) {
 			throw new HuffException("bad input, no PSEUDO_EOF");
@@ -221,7 +221,7 @@ public class HuffProcessor {
 	 * @param in the compressed BitInputStream
 	 * @param out the decompressed BitOutputStream
 	 */
-	public void readCompressedBits(HuffNode root, BitInputStream in, BitOutputStream out) {
+	private void readCompressedBits(HuffNode root, BitInputStream in, BitOutputStream out) {
 		HuffNode current = root;
 		while (true) {
 			int bits = in.readBits(1);
